@@ -2,6 +2,7 @@
 var React = window.React = require('react'),
     ReactDOM = require("react-dom"),
     Cities = require("./ui/Cities"),
+    Filters = require("./ui/Filters"),
     mountNode = document.getElementById("app");
 
 var TodoList = React.createClass({
@@ -26,9 +27,13 @@ var TodoApp = React.createClass({
     this.setState({items: nextItems, text: nextText});
   },
   render: function() {
+    /*TODO:<BubbleMap data=''/>*/
+    /*TODO:<Results data=''/>*/
+
     return (
-      <div>
-        <Cities />
+      <div id="main">
+        <Cities selected=''/>
+        <Filters filter='things'/>
       </div>
     );
   }

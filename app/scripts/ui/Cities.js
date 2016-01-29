@@ -6,7 +6,7 @@ var Cities = (props) => (
   <div className="row">
     {props.cities.map(function(city) {
       var selected = city.code==props.selected?'selected':'';
-      return <button title={city.name} className={selected + ' btn btn-default col-md-1'}>{city.code}</button>
+      return <button key={city.code} title={city.name} className={selected + ' btn btn-default col-md-1'}>{city.code}</button>
     })}
   </div>
   );
