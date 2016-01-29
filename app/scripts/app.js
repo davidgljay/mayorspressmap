@@ -32,8 +32,8 @@ var TodoApp = React.createClass({
 
     return (
       <div id="main">
-        <Cities selected=''/>
-        <Filters filter='things'/>
+        <Cities selected='NYC'/>
+        <Filters filter='all'/>
         <Results />
       </div>
     );

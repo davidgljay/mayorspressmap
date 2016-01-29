@@ -5,8 +5,8 @@ var React = require('react');
 var Cities = (props) => (
   <div className="row">
     {props.cities.map(function(city) {
-      var selected = city.code==props.selected?'selected':'';
-      return <button key={city.code} title={city.name} className={selected + ' btn btn-default col-md-1'}>{city.code}</button>
+      var selected = city.code==props.selected?'btn-primary':'btn-default';
+      return <button key={city.code} title={city.name} className={selected + ' btn col-md-1'}>{city.code}</button>
     })}
   </div>
   );
