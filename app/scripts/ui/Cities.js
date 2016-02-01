@@ -17,10 +17,11 @@ Cities.defaultProps = {
       {code:'NYC', name:'New York City'},
       {code:'LAX', name:'Los Angeles'},
       {code:'HOU', name:'Houston'},
-      {code:'CHI', name:'Chicago'},
       {code:'PHL', name:'Philadelphia'},
-      {code:'SAN', name:'San Antonio'},
       {code:'PHX', name:'Pheonix'},
+      {code:'SAT', name:'San Antonio'},
+      {code:'SAN', name:'San Diego'},
+      {code:'CHI', name:'Chicago'},
       {code:'DFW', name:'Dallas'},
       {code:'SJC', name:'San Jose'}
   ],
