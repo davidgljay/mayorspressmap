@@ -8,8 +8,8 @@ var BubbleMap = React.createClass({
     return {path:'/maps/all.json'};
   },
   componentDidMount: function(props) {
-  	var width=480,
-	height=340;
+    var width=480,
+    height=340;
 
 	//TODO: Add scales
 
