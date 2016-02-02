@@ -4,29 +4,10 @@ var React = window.React = require('react'),
     Cities = require("./ui/Cities"),
     Filters = require("./ui/Filters"),
     Results = require("./ui/Results"),
+    BubbleMap = require("./ui/BubbleMap"),
     mountNode = document.getElementById("app");
 
-var TodoList = React.createClass({
-  render: function() {
-    var createItem = function(itemText) {
-      return <li>{itemText}</li>;
-    };
-    return <ul>{this.props.items.map(createItem)}</ul>;
-  }
-});
-var TodoApp = React.createClass({
-  getInitialState: function() {
-    return {items: [], text: ''};
-  },
-  onChange: function(e) {
-    this.setState({text: e.target.value});
-  },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var nextItems = this.state.items.concat([this.state.text]);
-    var nextText = '';
-    this.setState({items: nextItems, text: nextText});
-  },
+var MayorsBuzz = React.createClass({
   render: function() {
     /*TODO:<BubbleMap data=''/>*/
 
@@ -34,6 +15,7 @@ var TodoApp = React.createClass({
       <div id="main">
         <Cities selected='NYC'/>
         <Filters filter='all'/>
+        <BubbleMap />
         <Results />
       </div>
     );
@@ -41,5 +23,5 @@ var TodoApp = React.createClass({
 });
 
 
-ReactDOM.render(<TodoApp />, mountNode);
+ReactDOM.render(<MayorsBuzz />, mountNode);
 
