@@ -3,8 +3,8 @@
 var React = require('react'),
 d3 = require('d3');
 
-var maxRadius = 22,
-padding = 10;
+var maxRadius = 40,
+padding = 50;
 
 var BubbleMap = React.createClass({
   getInitialState: function() {
@@ -42,7 +42,25 @@ var BubbleMap = React.createClass({
       var circles = svg.selectAll("circle").data(json).enter().append("circle")
         // .text(function(d){return prettify(d.tag)})
         // .style('font-size', function(d){return radiusScale(d.count)})
-        .attr('r',function(d){return radiusScale(d.count)});
+        .attr('r',function(d){return radiusScale(d.count)})
+        .attr('id', function(d){return idify(d.tag)})
+        .style('fill','lightblue');
+
+      var target = svg.append("circle")
+        .attr('r', 5)
+        .attr('id','target')
+        .attr('cx',width/2)
+        .attr('cy',height/10)
+        .style('fill','red')
+        .style('z-index','-100')
+
+      var text = svg.selectAll("text").data(json).enter().append("text")
+        .attr('id', function(d){return idify(d.tag)})
+        .text(function(d){return prettify(d.tag)})
+        .attr("dy",".32em")
+        .attr('text-anchor', 'middle')
+        .each(wrap);
+
 
       var force = d3.layout.force()
           .nodes(tags)
@@ -55,17 +73,37 @@ var BubbleMap = React.createClass({
       circles.call(force.drag);
 
       force.on('tick',function() {
+        //Draw each circle to a point on the x axis equal to its gravity.
           circles.each(function(d) {
-              var alpha = .05;
-              d.y += (height/2 - d.y) * alpha;
-              d.x += (dateScale(new Date(d.med_date).getTime())- d.x) * alpha;
+              var alpha = .05,
+              selectBox = {
+                x1: width/2-height/10,
+                y1:0,
+                x2:width/2+height/10,
+                y2:height/5
+              };
+              //TODO: Create attractor box, draw narby stuff to the center of it instead
+              if (selectBox.x1<d.x && selectBox.x2>d.x && selectBox.y1 < d.y && selectBox.y2 > d.y) {
+                d.y += (height/10 - d.y) * alpha;
+                d.x += (width/2 - d.x) * alpha;
+              } else {
+                d.y += (height/2 - d.y) * alpha;
+                d.x += (dateScale(new Date(d.med_date).getTime())- d.x) * alpha;
+              }
             })
             .each(collide(.5))
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
+        //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
+          text
+            //Set the X coordinate to the center of the circle minus the radius.
+            .attr("x", function(d) { return svg.select("circle#"+idify(d.tag)).attr('cx')})
+            .attr("y", function(d) { return svg.select("circle#"+idify(d.tag)).attr('cy')})
+            .attr("width", function(d) { return radiusScale(d.count)*2})
       })
 
-      // Resolve collisions between nodes.
+      // Resolve collisions between circles.
+      //TODO: Create d3 utils that has this and other functions.
       var collide = function (alpha) {
         var quadtree = d3.geom.quadtree(tags);
         return function(d) {
@@ -107,10 +145,38 @@ function prettify(tag) {
   return tag.replace(/_/g, " ");
 }
 
+function idify(tag) {
+  return tag.replace(/[^a-z0-9_]/ig,"");
+}
+
+function wrap(width) {
+  return function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  }
+}
+
 function getRadiusScale(json) {
   return d3.scale.pow().exponent(.5)
     .domain([0,getMaxCount(json)])
-    .range([5,maxRadius])
+    .range([10,maxRadius])
 }
 
 function getCountScale(json, height) {
