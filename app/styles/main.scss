@@ -15,14 +15,6 @@ body {
     padding-bottom: 20px;
 }
 
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
 /* Custom page header */
 .header {
     border-bottom: 1px solid #e5e5e5;
@@ -47,23 +39,6 @@ body {
     margin: 30px 0;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
-    text-align: center;
-    border-bottom: 1px solid #e5e5e5;
-    .btn {
-        font-size: 21px;
-        padding: 14px 24px;
-    }
-}
-
-/* Supporting marketing content */
-.marketing {
-    margin: 40px 0;
-    p + h4 {
-        margin-top: 28px;
-    }
-}
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
@@ -83,9 +58,18 @@ body {
     .header {
         margin-bottom: 30px;
     }
-
-    /* Remove the bottom border on the jumbotron for visual effect */
-    .jumbotron {
-        border-bottom: 0;
-    }
 }
+
+.fade {
+    -webkit-animation: 500ms fade_out;
+     -moz-animation: 500ms fade_out;
+       -o-animation: 500ms fade_out;
+        animation: 500ms fade_out;
+}
+
+/* Bubblemaps exit animation. TODO: look for a way to move this into a separate CSS file.*/
+
+@-webkit-keyframes fade_out { from { opacity:1.0; } to { opacity:0; }  }
+   @-moz-keyframes fade_out { from { opacity:1.0; } to { opacity:0; }  }
+     @-o-keyframes fade_out { from { opacity:1.0; } to { opacity:0; }  }
+        @keyframes fade_out { from { opacity:1.0; } to { opacity:0; }  }

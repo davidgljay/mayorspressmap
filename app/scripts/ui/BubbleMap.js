@@ -4,29 +4,56 @@ var React = require('react'),
 d3 = require('d3');
 
 var maxRadius = 40,
-padding = 50;
+padding = 50,
+width=700,
+height=400;
+
+//How to do this? In principle I want smooth animations, I want the new guys to "pop" out of where the selected one was, and I want the selected one to still be draggable.
+
+//So what's the nature of the animation? 
+
+//I  can stop the force, this will prevent craziness unless someone starts dragging something again.
+//Then I can apply a transition (CSS or d3?) to everything that's not a tag.
+//Then I can change the path, which (maybe) gets react to reload.
+//Then I can make everything emerge from the dot. Just need to reapply my original function.
+//Removing something from the dot should set "selected" to false, reversing the process (what if I want to switch??)
+//TODO: figure out how to display cities (on another axis?)
+//TODO: Experiment w/ vertical axis.
 
 var BubbleMap = React.createClass({
   getInitialState: function() {
     return null;
   },
   componentDidMount: function() {
-    var width=700,
-    height=400;
-
-  	//TODO: Add scales
 
   	//Create the layout
   	var svg = d3.select('#bubbleMap').append('svg')
   		.attr('width', width)
   		.attr('height', height);
 
+    var datapath = this.props.path;
+
     //Get JSON data
-    d3.json(this.props.path, function(err, json) {
+    d3.json(datapath, function(err, json) {
       if (err) {
         console.error(err);
         return;
       }
+
+      //See if we are pulling data about a particular tag.
+      var selected_tag = /(maps\/tag\/)(.+)(\.json)/.exec(datapath);
+      if (selected_tag) {
+        var selected_tag_circle = svg.append('circle')
+        .attr('r', 5)//How do I get this info?
+        .attr('id',selected_tag[2])
+        .attr('cx',width/2)
+        .attr('cy',height/10)
+        .classed('selected')
+        .style('fill','lightblue');
+      }
+      console.log(selected_tag);
+
+      console.log(datapath);
 
       var countScale = getCountScale(json, height),
       dateScale = getDateScale(json, width),
@@ -38,21 +65,19 @@ var BubbleMap = React.createClass({
         return tag;
       })
 
-      //Add "tag" objects for each datapoint.
-      var circles = svg.selectAll("circle").data(json).enter().append("circle")
-        // .text(function(d){return prettify(d.tag)})
-        // .style('font-size', function(d){return radiusScale(d.count)})
-        .attr('r',function(d){return radiusScale(d.count)})
-        .attr('id', function(d){return idify(d.tag)})
-        .style('fill','lightblue');
-
-      var target = svg.append("circle")
+      var target = svg.append('circle')
         .attr('r', 5)
         .attr('id','target')
         .attr('cx',width/2)
         .attr('cy',height/10)
         .style('fill','red')
         .style('z-index','-100')
+
+      var circles = svg.selectAll("circle .tag").data(json).enter().append("circle")
+        .attr('r',function(d){return radiusScale(d.count)})
+        .attr('id', function(d){return idify(d.tag)})
+        .attr('class','tag')
+        .style('fill','lightblue')
 
       var text = svg.selectAll("text").data(json).enter().append("text")
         .attr('id', function(d){return idify(d.tag)})
@@ -73,6 +98,7 @@ var BubbleMap = React.createClass({
       circles.call(force.drag);
 
       force.on('tick',function() {
+        var selected;
         //Draw each circle to a point on the x axis equal to its gravity.
           circles.each(function(d) {
               var alpha = .05,
@@ -82,6 +108,11 @@ var BubbleMap = React.createClass({
                 x2:width/2+height/10,
                 y2:height/5
               };
+
+              if (Math.abs(d.x-width/2)<.001 && Math.abs(d.y-height/10)<.001) {
+                selected = d.tag;
+              }
+
               //TODO: Create attractor box, draw narby stuff to the center of it instead
               if (selectBox.x1<d.x && selectBox.x2>d.x && selectBox.y1 < d.y && selectBox.y2 > d.y) {
                 d.y += (height/10 - d.y) * alpha;
@@ -93,13 +124,24 @@ var BubbleMap = React.createClass({
             })
             .each(collide(.5))
             .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
+            .attr("cy", function(d) { return d.y; })
+            .classed("fade", function(d) {
+              if (!selected) return false;
+              else if (selected == d.tag) return false;
+              else return true;
+            })
         //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
           text
             //Set the X coordinate to the center of the circle minus the radius.
             .attr("x", function(d) { return svg.select("circle#"+idify(d.tag)).attr('cx')})
             .attr("y", function(d) { return svg.select("circle#"+idify(d.tag)).attr('cy')})
             .attr("width", function(d) { return radiusScale(d.count)*2})
+            .classed("fade", function(d) {
+              if (!selected) return false;
+              else if (selected == d.tag) return false;
+              else return true;
+            })
+        //Check to see if the selected circle has been removed. If so fade everything out and reload the main page.
       })
 
       // Resolve collisions between circles.
@@ -208,6 +250,12 @@ function getDateScale(json, width) {
     .domain([minDate, maxDate])
     .range([20, width-20]);
 };
+
+function testForSelection(d) {
+  if (Math.abs(d.x-width/2)<.3 && Math.abs(d.y-height/10)<.3) {
+
+  }
+}
 
 BubbleMap.propTypes = {path: React.PropTypes.string};
 
