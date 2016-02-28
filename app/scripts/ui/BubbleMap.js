@@ -44,7 +44,7 @@ var BubbleMap = React.createClass({
       var selected_tag = /(maps\/tag\/)(.+)(\.json)/.exec(datapath);
       if (selected_tag) {
         var selected_tag_circle = svg.append('circle')
-        .attr('r', 10)//How do I get this info?
+        .attr('r', maxRadius)
         .attr('id',selected_tag[2])
         .attr('cx',width/2)
         .attr('cy',height/10)
@@ -108,6 +108,8 @@ var BubbleMap = React.createClass({
                 x2:width/2+height/10,
                 y2:height/5
               };
+
+              d.tag=idify(d.tag);
 
               //Select a tag if it's close to the selection point. 
               if (Math.abs(d.x-width/2)<.05 && Math.abs(d.y-height/10)<.05) {
