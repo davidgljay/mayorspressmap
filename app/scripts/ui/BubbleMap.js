@@ -4,7 +4,7 @@ var React = require('react'),
 d3 = require('d3');
 
 var maxRadius = 40,
-padding = 50,
+padding = 7,
 width=700,
 height=400;
 
@@ -147,11 +147,6 @@ var BubbleMap = React.createClass({
               else return true;
             })
 
-          //Once a selection has stopped, stop updating everything.
-          if(selected) {
-            force.stop();
-          }
-
           //Expand tag once it is selected
           svg.select("#"+selected).transition()
             .attr("r",maxRadius)
@@ -159,6 +154,8 @@ var BubbleMap = React.createClass({
             .each("end", function() {
                 window.location.hash = "#/tag/"+selected;
             })
+
+          //TODO: Handle unselection
         //Check to see if the selected circle has been removed. If so fade everything out and reload the main page.
       })
 
@@ -177,7 +174,7 @@ var BubbleMap = React.createClass({
               var x = d.x - quad.point.x,
                   y = d.y - quad.point.y,
                   l = Math.sqrt(x * x + y * y),
-                  r = radiusScale(d.count) + radiusScale(quad.point.count);
+                  r = radiusScale(d.count) + radiusScale(quad.point.count) + padding;
               if (l < r) {
                 l = (l - r) / l * alpha;
                 d.x -= x *= l;
