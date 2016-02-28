@@ -44,7 +44,7 @@ var BubbleMap = React.createClass({
       var selected_tag = /(maps\/tag\/)(.+)(\.json)/.exec(datapath);
       if (selected_tag) {
         var selected_tag_circle = svg.append('circle')
-        .attr('r', 5)//How do I get this info?
+        .attr('r', 10)//How do I get this info?
         .attr('id',selected_tag[2])
         .attr('cx',width/2)
         .attr('cy',height/10)
@@ -109,11 +109,12 @@ var BubbleMap = React.createClass({
                 y2:height/5
               };
 
-              if (Math.abs(d.x-width/2)<.001 && Math.abs(d.y-height/10)<.001) {
+              //Select a tag if it's close to the selection point. 
+              if (Math.abs(d.x-width/2)<.05 && Math.abs(d.y-height/10)<.05) {
                 selected = d.tag;
               }
 
-              //TODO: Create attractor box, draw narby stuff to the center of it instead
+              //Move tags towards their appropriate spot in the visualization or towards the selection box.
               if (selectBox.x1<d.x && selectBox.x2>d.x && selectBox.y1 < d.y && selectBox.y2 > d.y) {
                 d.y += (height/10 - d.y) * alpha;
                 d.x += (width/2 - d.x) * alpha;
@@ -125,11 +126,13 @@ var BubbleMap = React.createClass({
             .each(collide(.5))
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; })
+            //Fade out if not selected.
             .classed("fade", function(d) {
               if (!selected) return false;
               else if (selected == d.tag) return false;
               else return true;
             })
+
         //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
           text
             //Set the X coordinate to the center of the circle minus the radius.
@@ -140,6 +143,19 @@ var BubbleMap = React.createClass({
               if (!selected) return false;
               else if (selected == d.tag) return false;
               else return true;
+            })
+
+          //Once a selection has stopped, stop updating everything.
+          if(selected) {
+            force.stop();
+          }
+
+          //Expand tag once it is selected
+          svg.select("#"+selected).transition()
+            .attr("r",maxRadius)
+            //Navigate to a new page when the transition is complete
+            .each("end", function() {
+                window.location.hash = "#/tag/"+selected;
             })
         //Check to see if the selected circle has been removed. If so fade everything out and reload the main page.
       })
@@ -250,12 +266,6 @@ function getDateScale(json, width) {
     .domain([minDate, maxDate])
     .range([20, width-20]);
 };
-
-function testForSelection(d) {
-  if (Math.abs(d.x-width/2)<.3 && Math.abs(d.y-height/10)<.3) {
-
-  }
-}
 
 BubbleMap.propTypes = {path: React.PropTypes.string};
 
