@@ -5,16 +5,11 @@ var React = window.React = require('react'),
     Filters = require("./ui/Filters"),
     Results = require("./ui/Results"),
     BubbleMap = require("./ui/BubbleMap"),
-        mountNode = document.getElementById("app"),
-    ReactRouter = require('react-router'),
-    Router = ReactRouter.Router,
-    hashHistory = ReactRouter.hashHistory,
-    Route = ReactRouter.Route;
+        mountNode = document.getElementById("app");
 
 var MayorsBuzz = React.createClass({
   render: function() {
     /*TODO:<BubbleMap data=''/>*/
-    console.log(this.props.params)
 
     return (
       <div id="main">
@@ -26,14 +21,7 @@ var MayorsBuzz = React.createClass({
   }
 });
 
-ReactDom.render((
-  <Router history={hashHistory}>
-    <Route path="/" component={MayorsBuzz}/>
-    <Route path="/tag/:tagName" component={MayorsBuzz}/>
-    <Route path="/city/:cityName" component={MayorsBuzz}/>
-    <Route path="/city/:cityName/:tagName" component={MayorsBuzz}/>
-  </Router>
-), mountNode)
+ReactDom.render(<MayorsBuzz/>, mountNode)
 
 
 
