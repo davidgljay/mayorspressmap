@@ -2,10 +2,11 @@ var utils = require('./utils'),
 scales = require('./scales');
 
 module.exports.enter = function enter(svg,json) {
-	return svg.selectAll("text").data(json).enter().append("text")
+	return svg.selectAll("text .tag").data(json).enter().append("text")
         .attr('id', function(d){return utils.idify(d.tag)})
         .text(function(d){return utils.prettify(d.tag)})
         .attr("dy",".32em")
+        .classed('tag', true)
         .attr('text-anchor', 'middle');
 }
 

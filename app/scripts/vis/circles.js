@@ -2,6 +2,7 @@ var utils = require('./utils'),
 scales = require('./scales');
 
 module.exports.enter = function enter(svg, json, radiusScale) {
+
 	return svg.selectAll("circle .tag").data(json).enter().append("circle")
     .attr('r',function(d){return radiusScale(d.count)})
     .attr('id', function(d){return utils.idify(d.tag)})
@@ -13,7 +14,7 @@ module.exports.getSelected = function getSelected(selection, width, height) {
 	var selected_tag;
 	selection.each(function(d) {
       //Select a tag if it's close to the selection point. 
-      if (Math.abs(d.x-width/2)<.05 && Math.abs(d.y-height/10)<.05) {
+      if (Math.abs(d.x-width/2)<.15 && Math.abs(d.y-height/10)<.15) {
         selected_tag=d.tag;
       }
 	})
