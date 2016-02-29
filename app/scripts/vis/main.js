@@ -16,13 +16,14 @@ var render = module.exports.render = function () {
     .attr('width', width)
     .attr('height', height);
 
-  //TODO: Derive datapath from hash;
-  var datapath = '/maps/all.json';
   var url_regex = /\#\/tag\/(.+)/,
   selected_tag = {};
   selected_tag.text = url_regex.exec(window.location.hash) ? url_regex.exec(window.location.hash)[1]: null;
   selected_tag.dx = 0;
   selected_tag.dy = 0;
+
+  //TODO: Derive datapath from hash;
+  var datapath = selected_tag.text ? '/maps/tags/'+selected_tag.text+'.json' : '/maps/all.json';
 
   var target = svg.append('circle')
       .attr('r', 5)
