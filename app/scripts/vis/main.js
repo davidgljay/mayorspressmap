@@ -19,7 +19,10 @@ var render = module.exports.render = function () {
   //TODO: Derive datapath from hash;
   var datapath = '/maps/all.json';
   var url_regex = /\#\/tag\/(.+)/,
-  selected_tag = url_regex.exec(window.location.hash) ? url_regex.exec(window.location.hash)[1]: null;
+  selected_tag = {};
+  selected_tag.text = url_regex.exec(window.location.hash) ? url_regex.exec(window.location.hash)[1]: null;
+  selected_tag.dx = 0;
+  selected_tag.dy = 0;
 
   var target = svg.append('circle')
       .attr('r', 5)
@@ -29,33 +32,56 @@ var render = module.exports.render = function () {
       .style('fill','red')
       .style('z-index','-100');
 
-      //See if we are pulling data about a particular tag.
-    if (selected_tag) {
-      console.log("Loading selected tag");
-      var selected_tag_circle = svg.append('circle')
+    //See if we are pulling data about a particular tag.
+    //TODO: Move logic to separate file
+    if (selected_tag.text) {
+      var drag = d3.behavior.drag();
+        //Make the selected circle draggable;
+      drag.on("drag", function(d) {
+          d.dx += d3.event.dx;
+          d.dy += d3.event.dy;
+          d3.select('#selected_tag_circle').attr("transform", function(){
+            return "translate(" + [ d.dx,d.dy ] + ")"
+          })
+          d3.select('#selected_tag_text').attr("transform", function() {
+            return "translate(" + [d.dx, d.dy ] + ")"
+          })
+        })
+      drag.on("dragstart", function(d) {
+          d3.select('#selected_tag_circle').transition()
+          .duration(750)
+          .attr("opacity",0)
+          .each("end", function() {
+            //After fading out the currently selected tag, reload the page at the root url.
+            window.location.hash="";
+            d3.select('#bubbleMap svg').remove();
+            render();
+          })
+          d3.select('#selected_tag_text').transition()
+          .duration(750)
+          .attr("opacity", 0);
+        })
+
+      var selected_tag_circle = svg.selectAll("circle .selected").data([selected_tag]).enter().append('circle')
       .attr('r', maxRadius)
-      .attr('id',selected_tag+"_selected")
+      .attr('id',"selected_tag_circle")
       .attr('cx',width/2)
       .attr('cy',height/10)
+      .attr('opacity',1)
       .classed('selected', true)
-      .style('fill','lightblue');
+      .style('fill','lightblue')
+      .call(drag);
 
       var selected_tag_text = svg.append('text')
       .attr('width', maxRadius * 2)
       .attr('dx', width/2)
       .attr("dy",height/10+5)
-      .attr('id',selected_tag+"_selected")
+      .attr('opacity',1)
+      .attr('id',"selected_tag_text")
       .attr('text-anchor', 'middle')
-      .text(utils.prettify(selected_tag));
+      .text(utils.prettify(selected_tag.text));
 
-      var selected_tag_force = d3.layout.force()
-        .nodes(selected_tag_circle)
-        .size([width, height])
-        .friction(0)
-        .gravity(0)
-        .start();
 
-      selected_tag_circle.call(selected_tag_force.drag);
     }
 
   //Get JSON data
@@ -65,7 +91,7 @@ var render = module.exports.render = function () {
       return;
     }
 
-    console.log(selected_tag);
+    // console.log(selected_tag);
 
     console.log(datapath);
 
@@ -95,19 +121,23 @@ var render = module.exports.render = function () {
 
 
     force.on('tick',function() {
-      var selected_tag = circleVis.getSelected(circles, width, height);
+      var new_selected_tag = circleVis.getSelected(circles, width, height);
       //Draw each circle to a point on the x axis equal to its gravity.
-      circleVis.onTick(circles, selected_tag, width, height, dateScale, collide);
+      circleVis.onTick(circles, new_selected_tag, width, height, dateScale, collide);
 
       //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
-      textVis.onTick(text, selected_tag, width, height, svg);
+      textVis.onTick(text, new_selected_tag, width, height, svg);
 
+      if (new_selected_tag) {
+        force.stop();
+      }
       //Expand tag once it is selected
-      svg.select("#"+selected_tag).transition()
+      svg.select("#"+new_selected_tag).transition()
+      .duration(500)
         .attr("r",maxRadius)
         //Navigate to a new page when the transition is complete
         .each("end", function() {
-            window.location.hash = "#/tag/"+selected_tag;
+            window.location.hash = "#/tag/"+new_selected_tag;
             d3.select('#bubbleMap svg').remove();
             render();
         })
