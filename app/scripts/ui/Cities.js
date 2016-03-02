@@ -17,18 +17,18 @@ var Cities = React.createClass({
         <div className="row">
           {this.props.cities.map(function(city) {
             var selected = city.code==self.state.city?'btn-primary':'btn-default';
-            return <button id={city.code} onClick={self.handleClick.bind(this,city)} title={city.name} className={selected + ' btn col-md-1'}>{city.code}</button>
+            return <button id={city.code} key={city.code} onClick={self.handleClick.bind(this,city)} title={city.name} className={selected + ' btn col-md-1'}>{city.code}</button>
           })}
         </div>
     );
   },
   handleClick: function(city) {
     //TODO: Send event to trigger rerendering.
-    var cityRegex = /#\/city\/[A-Z]+/;
+    var cityRegex = /#\/city\/[a-z]+/;
     if (cityRegex.exec(window.location.hash)) {
-      window.location.hash = window.location.hash.replace(cityRegex, "#/city/"+city.code)
+      window.location.hash = window.location.hash.replace(cityRegex, "#/city/"+city.code.toLowerCase())
     } else {
-      window.location.hash="#/city/"+city.code;
+      window.location.hash="#/city/"+city.code.toLowerCase();
     }
     this.setState({city:city.code});
   }
