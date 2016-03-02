@@ -16,7 +16,7 @@ var render = module.exports.render = function () {
     .attr('width', width)
     .attr('height', height);
 
-  var url_regex = /\#\/tag\/(.+)/,
+  var url_regex = /\/tag\/(.+)/,
   selected_tag = {};
   selected_tag.text = url_regex.exec(window.location.hash) ? url_regex.exec(window.location.hash)[1]: null;
   selected_tag.dx = 0;
@@ -136,7 +136,7 @@ var render = module.exports.render = function () {
         .attr("r",maxRadius)
         //Navigate to a new page when the transition is complete
         .each("end", function() {
-            rerender(new_selected_tag);
+            rerender("/tag/" + new_selected_tag);
         })
 
         //TODO: Handle unselection
@@ -148,12 +148,10 @@ var render = module.exports.render = function () {
 
 var rerender = function(newhash) {
   console.log(newhash)
-  if (/\/tag\/.+./.exec(window.location.hash)) {
-    window.location.hash = window.location.hash.replace(/\/tag\/.+./, '/tag/'+newhash)
-  } else if (newhash.length > 0) {
-    window.location.hash = window.location.hash + "/tag/" + newhash;
+ if (/\/tag\/.+./.exec(window.location.hash)) {
+    window.location.hash = window.location.hash.replace(/\/tag\/.+./, newhash)
   } else {
-    window.location.hash = newhash;
+    window.location.hash = window.location.hash + newhash;
   }
   console.log(window.location.hash)
   d3.select('#bubbleMap svg').remove();
