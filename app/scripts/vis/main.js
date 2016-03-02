@@ -16,14 +16,24 @@ var render = module.exports.render = function () {
     .attr('width', width)
     .attr('height', height);
 
-  var url_regex = /\/tag\/(.+)/,
+  var tag_regex = /\/tag\/(.+)/,
   selected_tag = {};
-  selected_tag.text = url_regex.exec(window.location.hash) ? url_regex.exec(window.location.hash)[1]: null;
+  selected_tag.text = tag_regex.exec(window.location.hash) ? tag_regex.exec(window.location.hash)[1]: null;
   selected_tag.dx = 0;
   selected_tag.dy = 0;
 
-  //TODO: Derive datapath from hash;
-  var datapath = selected_tag.text ? '/maps/tags/'+selected_tag.text+'.json' : '/maps/all.json';
+  var city_regex = /\/city\/([a-z]+)/,
+  selected_city = city_regex.exec(window.location.hash);
+
+  var datapath;
+
+  if (selected_city) {
+    datapath = '/maps/cities/'+selected_city[1]+'.json';
+  } else if (selected_tag.text) {
+    datapath = '/maps/tags/'+selected_tag.text+'.json';
+  } else {
+    datapath = '/maps/all.json';
+  }
 
   var target = svg.append('circle')
       .attr('r', 5)
@@ -90,22 +100,20 @@ var render = module.exports.render = function () {
       return;
     }
 
-    // console.log(selected_tag);
+    var tagdata = json.tags;
 
-    console.log(datapath);
+    var countScale = scales.getCountScale(tagdata, height),
+    dateScale = scales.getDateScale(tagdata, width),
+    radiusScale = scales.getRadiusScale(tagdata, maxRadius);
 
-    var countScale = scales.getCountScale(json, height),
-    dateScale = scales.getDateScale(json, width),
-    radiusScale = scales.getRadiusScale(json, maxRadius);
-
-    var tags = json.map(function(tag) {
+    var tags = tagdata.map(function(tag) {
       tag.x = width/2;
       tag.y = height/2 + tag.count*10;
       return tag;
     }),
     //Add circles and text
-    circles = circleVis.enter(svg, json, radiusScale),
-    text = textVis.enter(svg, json),
+    circles = circleVis.enter(svg, tagdata, radiusScale),
+    text = textVis.enter(svg, tagdata),
     //Generate collision detection function
     collide = utils.collide(tags, radiusScale, maxRadius);
 
@@ -147,7 +155,6 @@ var render = module.exports.render = function () {
 };
 
 var rerender = function(newhash) {
-  console.log(newhash)
  if (/\/tag\/.+./.exec(window.location.hash)) {
     window.location.hash = window.location.hash.replace(/\/tag\/.+./, newhash)
   } else {
