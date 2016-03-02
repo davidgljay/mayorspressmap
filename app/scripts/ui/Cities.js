@@ -1,14 +1,15 @@
 'use strict';
 
-var React = require('react');
+var React = require('react'),
+pubsub = require('pubsub-js')
 
 var Cities = React.createClass({
   getInitialState: function() {
-    var selected_city = /#\/city\/(.+)/.exec(window.location.hash);
+    var selected_city = /\/city\/([a-z]+)/.exec(window.location.hash);
     if (selected_city) {
-      return {city:selected_city[1]};
+      return {city:selected_city[1].toUpperCase()};
     } else {
-      return {};
+      return {city:'ALL'};
     }
   },
   render: function() {
@@ -23,13 +24,18 @@ var Cities = React.createClass({
     );
   },
   handleClick: function(city) {
-    //TODO: Send event to trigger rerendering.
-    var cityRegex = /#\/city\/[a-z]+/;
-    if (cityRegex.exec(window.location.hash)) {
+    var cityRegex = /#\/city\/[a-z^\/]+/;
+    console.log(city);
+    if (city.code=="ALL") {
+      window.location.hash = window.location.hash.replace(/\/city\/[a-z]+/,'');
+    } else if (cityRegex.exec(window.location.hash)) {
       window.location.hash = window.location.hash.replace(cityRegex, "#/city/"+city.code.toLowerCase())
+    } else if (/\/tag\//.exec(window.location.hash)){
+      window.location.hash=window.location.hash.replace('#',"#/city/"+city.code.toLowerCase());
     } else {
       window.location.hash="#/city/"+city.code.toLowerCase();
     }
+    pubsub.publish('rerender','');
     this.setState({city:city.code});
   }
 });
@@ -37,6 +43,7 @@ var Cities = React.createClass({
 Cities.propTypes = { cities: React.PropTypes.array, selected: React.PropTypes.string };
 Cities.defaultProps = { 
   cities: [
+      {code:'ALL', name:'Top 10 Cities'},
       {code:'NYC', name:'New York City'},
       {code:'LAX', name:'Los Angeles'},
       {code:'HOU', name:'Houston'},

@@ -1,7 +1,8 @@
 'use strict';
 
 var React = require('react'),
-bubbleMap = require('../vis/main');
+bubbleMap = require('../vis/main'),
+pubsub = require('pubsub-js');
 
 //Ok, so the single selection seems to work. I need to figure out how to retrigger it.
 
@@ -16,9 +17,13 @@ var BubbleMap = React.createClass({
   },
   componentDidMount: function() {
     bubbleMap.render();
-
+    pubsub.subscribe('rerender', function() {
+      console.log("Rerendering")
+      bubbleMap.rerender('', false);
+    });
   },
   componentWillUnmount: function() {
+    pubsub.unsubscribe('rerender');
   },
   render: function() {
     return (

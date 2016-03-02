@@ -5,6 +5,8 @@ circleVis = require('./circles'),
 utils = require('./utils'),
 d3 = require('d3');
 
+console.log(global.PubSub)
+
 var maxRadius = 40,
 width=700,
 height=400;
@@ -154,13 +156,14 @@ var render = module.exports.render = function () {
   });
 };
 
-var rerender = function(newhash) {
- if (/\/tag\/.+./.exec(window.location.hash)) {
-    window.location.hash = window.location.hash.replace(/\/tag\/.+./, newhash)
-  } else {
-    window.location.hash = window.location.hash + newhash;
+var rerender = module.exports.rerender = function(newhash, updateHash = true) {
+  if (updateHash) {
+   if (/\/tag\/.+./.exec(window.location.hash)) {
+      window.location.hash = window.location.hash.replace(/\/tag\/.+./, newhash)
+    } else {
+      window.location.hash = window.location.hash + newhash;
+    }    
   }
-  console.log(window.location.hash)
   d3.select('#bubbleMap svg').remove();
   render();
 }
