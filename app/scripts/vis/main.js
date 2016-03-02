@@ -54,9 +54,7 @@ var render = module.exports.render = function () {
           .attr("opacity",0)
           .each("end", function() {
             //After fading out the currently selected tag, reload the page at the root url.
-            window.location.hash="";
-            d3.select('#bubbleMap svg').remove();
-            render();
+            rerender("");
           })
           d3.select('#selected_tag_text').transition()
           .duration(750)
@@ -138,9 +136,7 @@ var render = module.exports.render = function () {
         .attr("r",maxRadius)
         //Navigate to a new page when the transition is complete
         .each("end", function() {
-            window.location.hash = "#/tag/"+new_selected_tag;
-            d3.select('#bubbleMap svg').remove();
-            render();
+            rerender(new_selected_tag);
         })
 
         //TODO: Handle unselection
@@ -150,3 +146,16 @@ var render = module.exports.render = function () {
   });
 };
 
+var rerender = function(newhash) {
+  console.log(newhash)
+  if (/\/tag\/.+./.exec(window.location.hash)) {
+    window.location.hash = window.location.hash.replace(/\/tag\/.+./, '/tag/'+newhash)
+  } else if (newhash.length > 0) {
+    window.location.hash = window.location.hash + "/tag/" + newhash;
+  } else {
+    window.location.hash = newhash;
+  }
+  console.log(window.location.hash)
+  d3.select('#bubbleMap svg').remove();
+  render();
+}

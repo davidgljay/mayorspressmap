@@ -23,7 +23,13 @@ var Cities = React.createClass({
     );
   },
   handleClick: function(city) {
-    window.location.hash="#/city/"+city.code;
+    //TODO: Send event to trigger rerendering.
+    var cityRegex = /#\/city\/[A-Z]+/;
+    if (cityRegex.exec(window.location.hash)) {
+      window.location.hash = window.location.hash.replace(cityRegex, "#/city/"+city.code)
+    } else {
+      window.location.hash="#/city/"+city.code;
+    }
     this.setState({city:city.code});
   }
 });
