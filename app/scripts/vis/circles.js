@@ -13,7 +13,7 @@ module.exports.getSelected = function getSelected(selection, width, height) {
 	var selected_tag;
 	selection.each(function(d) {
       //Select a tag if it's close to the selection point. 
-      if (Math.abs(d.x-width/2)<.15 && Math.abs(d.y-height/10)<.15) {
+      if (Math.abs(d.x-width/10)<.15 && Math.abs(d.y-height/10)<.15) {
         selected_tag=d.tag;
       }
 	})
@@ -24,9 +24,9 @@ module.exports.onTick = function onTick(selection, selected, width, height, date
 	return selection.each(function(d) {
     var alpha = .05,
     selectBox = {
-      x1: width/2-height/10,
+      x1: width/10-height/10,
       y1:0,
-      x2:width/2+height/10,
+      x2:width/10+height/10,
       y2:height/5
     };
 
@@ -35,7 +35,7 @@ module.exports.onTick = function onTick(selection, selected, width, height, date
     //Move tags towards their appropriate spot in the visualization or towards the selection box.
     if (selectBox.x1<d.x && selectBox.x2>d.x && selectBox.y1 < d.y && selectBox.y2 > d.y) {
       d.y += (height/10 - d.y) * alpha;
-      d.x += (width/2 - d.x) * alpha;
+      d.x += (width/10 - d.x) * alpha;
     } else {
       d.y += (height/2 - d.y) * alpha;
       d.x += (dateScale(utils.med_date(d.dates))- d.x) * alpha;

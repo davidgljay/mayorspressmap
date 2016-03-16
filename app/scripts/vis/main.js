@@ -38,7 +38,7 @@ var render = module.exports.render = function () {
   var target = svg.append('circle')
       .attr('r', 5)
       .attr('id','target')
-      .attr('cx',width/2)
+      .attr('cx',width/10)
       .attr('cy',height/10)
       .style('fill','red')
       .style('z-index','-100');
@@ -74,7 +74,7 @@ var render = module.exports.render = function () {
       var selected_tag_circle = svg.selectAll("circle .selected").data([selected_tag]).enter().append('circle')
       .attr('r', maxRadius)
       .attr('id',"selected_tag_circle")
-      .attr('cx',width/2)
+      .attr('cx',width/10)
       .attr('cy',height/10)
       .attr('opacity',1)
       .classed('selected', true)
@@ -83,7 +83,7 @@ var render = module.exports.render = function () {
 
       var selected_tag_text = svg.append('text')
       .attr('width', maxRadius * 2)
-      .attr('dx', width/2)
+      .attr('dx', width/10)
       .attr("dy",height/10+5)
       .attr('opacity',1)
       .attr('id',"selected_tag_text")
@@ -105,7 +105,7 @@ var render = module.exports.render = function () {
     //Add x and Y to tagdata
     for (var i=0; i<tagdata.length; i++) {
       tagdata[i].x = width/2;
-      tagdata[i].y = height/2 + tagdata[i].dates.length * 10;
+      tagdata[i].y = height/2 + i;
     }
 
     //Generate scales
