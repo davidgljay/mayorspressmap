@@ -8,8 +8,31 @@ module.exports.idify = function idify(tag) {
   return tag.replace(/[^a-z0-9_]/ig,"");
 }
 
+module.exports.arrayify = function arrayify(object, keyname) {
+	var results = [];
+	for (var key in object) {
+		object[key][keyname] = key;
+		results.push(object[key]);
+	}
+	return results;
+}
+
+module.exports.med_date = function med_date(dates) {
+	if (dates.length === 1) {
+		return new Date(dates[0]).getTime();
+	}
+	else if (dates.length % 2 === 0) {
+		return new Date(dates[dates.length/2]).getTime();
+	} else {
+		var mid = dates.length/2-.5;
+		var median_millis = (new Date(dates[mid]).getTime() + new Date(dates[mid+1]).getTime())/2;
+		return median_millis;
+	}
+}
+
 module.exports.collide = function collide(tags, radiusScale, maxRadius) {
 		var padding = 7;
+		console.log(tags)
 		return function(alpha) {
 		    var quadtree = d3.geom.quadtree(tags);
 		    return function(d) {
@@ -23,7 +46,7 @@ module.exports.collide = function collide(tags, radiusScale, maxRadius) {
 		            var x = d.x - quad.point.x,
 		                y = d.y - quad.point.y,
 		                l = Math.sqrt(x * x + y * y),
-		                r = radiusScale(d.count) + radiusScale(quad.point.count) + padding;
+		                r = radiusScale(d.dates.length) + radiusScale(quad.point.dates.length) + padding;
 		            if (l < r) {
 		              l = (l - r) / l * alpha;
 		              d.x -= x *= l;

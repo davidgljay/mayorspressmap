@@ -1,9 +1,10 @@
 
-var d3 = require('d3');
+var d3 = require('d3'),
+utils = require('./utils');
 
-module.exports.getRadiusScale = function getRadiusScale(json, maxRadius) {
+module.exports.getRadiusScale = function getRadiusScale(maxVal, maxRadius) {
   return d3.scale.pow().exponent(.5)
-    .domain([0,getMaxCount(json)])
+    .domain([0,maxVal])
     .range([10,maxRadius])
 };
 
@@ -24,7 +25,8 @@ module.exports.getCountScale = function getCountScale(json, height) {
 module.exports.getDateScale = function getDateScale(json, width) {
   var maxDate = 0, minDate = new Date().getTime();
   for (var i = json.length - 1; i >= 0; i--) {
-    var date = new Date(json[i].med_date).getTime();
+    // var date = new Date(json[i].med_date).getTime();
+    var date = utils.med_date(json[i].dates)
     if (date > maxDate) {
       maxDate = date;
     }

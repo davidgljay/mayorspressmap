@@ -5,8 +5,6 @@ circleVis = require('./circles'),
 utils = require('./utils'),
 d3 = require('d3');
 
-console.log(global.PubSub)
-
 var maxRadius = 40,
 width=700,
 height=400;
@@ -102,25 +100,28 @@ var render = module.exports.render = function () {
       return;
     }
 
-    var tagdata = json.tags;
+    var tagdata = utils.arrayify(json.tags, 'tag');
 
+    //Add x and Y to tagdata
+    for (var i=0; i<tagdata.length; i++) {
+      tagdata[i].x = width/2;
+      tagdata[i].y = height/2 + tagdata[i].dates.length * 10;
+    }
+
+    //Generate scales
     var countScale = scales.getCountScale(tagdata, height),
     dateScale = scales.getDateScale(tagdata, width),
-    radiusScale = scales.getRadiusScale(tagdata, maxRadius);
+    radiusScale = scales.getRadiusScale(json.max, maxRadius),
 
-    var tags = tagdata.map(function(tag) {
-      tag.x = width/2;
-      tag.y = height/2 + tag.count*10;
-      return tag;
-    }),
     //Add circles and text
     circles = circleVis.enter(svg, tagdata, radiusScale),
     text = textVis.enter(svg, tagdata),
+
     //Generate collision detection function
-    collide = utils.collide(tags, radiusScale, maxRadius);
+    collide = utils.collide(tagdata, radiusScale, maxRadius);
 
     var force = d3.layout.force()
-        .nodes(tags)
+        .nodes(tagdata)
         .size([width, height])
         .friction(0.9)
         .charge(0)
@@ -149,8 +150,6 @@ var render = module.exports.render = function () {
             rerender("/tag/" + new_selected_tag);
         })
 
-        //TODO: Handle unselection
-      //Check to see if the selected circle has been removed. If so fade everything out and reload the main page.
     })
 
   });
