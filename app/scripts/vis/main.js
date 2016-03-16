@@ -67,7 +67,7 @@ var render = module.exports.render = function () {
             //After fading out the currently selected tag, reload the page at the root url.
             rerender("");
           })
-          d3.select('#selected_tag_text').transition()
+          d3.select('#selected_tag_image').transition()
           .duration(750)
           .attr("opacity", 0);
         })
@@ -82,14 +82,21 @@ var render = module.exports.render = function () {
       .style('fill','lightblue')
       .call(drag);
 
-      var selected_tag_text = svg.append('text')
-      .attr('width', maxRadius * 2)
-      .attr('dx', width/10)
-      .attr("dy",height/10+5)
-      .attr('opacity',1)
-      .attr('id',"selected_tag_text")
-      .attr('text-anchor', 'middle')
-      .text(utils.prettify(selected_tag.text));
+      // var selected_tag_text = svg.append('text')
+      // .attr('width', maxRadius * 2)
+      // .attr('dx', width/10)
+      // .attr("dy",height/10+5)
+      // .attr('opacity',1)
+      // .attr('id',"selected_tag_text")
+      // .attr('text-anchor', 'middle')
+      // .text(utils.prettify(selected_tag.text));
+      var selected_tag_icon = svg.append("image")
+        .attr('width', maxRadius)
+        .attr('height', maxRadius)
+        .attr('xlink:href','images/icons/' + utils.idify(selected_tag.text) + '.png')
+        .attr('x', width/10-maxRadius/2)
+        .attr('y', height/10-maxRadius/2)
+        .attr('id', 'selected_tag_image');
 
 
     }
@@ -146,13 +153,19 @@ var render = module.exports.render = function () {
         force.stop();
       }
       //Expand tag once it is selected
-      svg.select("#"+new_selected_tag).transition()
+      svg.select("circle#"+new_selected_tag).transition()
       .duration(500)
         .attr("r",maxRadius)
         //Navigate to a new page when the transition is complete
         .each("end", function() {
             rerender("/tag/" + new_selected_tag);
         })
+      svg.select("image#"+new_selected_tag).transition()
+      .duration(500)
+        .attr("width", maxRadius)
+        .attr("height",maxRadius)
+        .attr("x", function(d) {return d.x-maxRadius/2})
+        .attr("y", function(d) {return d.y-maxRadius/2})
 
     })
 

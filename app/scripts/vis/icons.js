@@ -2,7 +2,7 @@ var utils = require('./utils'),
 scales = require('./scales');
 
 module.exports.enter = function enter(svg,json, radiusScale) {
-	return svg.selectAll("icon .tag").data(json).enter().append("image")
+	return svg.selectAll("image .tag").data(json).enter().append("image")
         .attr('id', function(d){return utils.idify(d.tag)})
         .attr('xlink:href',function(d){return 'images/icons/' + utils.idify(d.tag) + '.png'})
         .attr('width', function(d) {return radiusScale(d.dates.length)})
