@@ -1,6 +1,7 @@
 var utils = require('./utils'),
 scales = require('./scales'),
 textVis = require('./text'),
+iconVis = require('./icons'),
 circleVis = require('./circles'),
 utils = require('./utils'),
 d3 = require('d3');
@@ -115,7 +116,8 @@ var render = module.exports.render = function () {
 
     //Add circles and text
     circles = circleVis.enter(svg, tagdata, radiusScale),
-    text = textVis.enter(svg, tagdata),
+    // text = textVis.enter(svg, tagdata),
+    icons = iconVis.enter(svg, tagdata, radiusScale),
 
     //Generate collision detection function
     collide = utils.collide(tagdata, radiusScale, maxRadius);
@@ -128,6 +130,7 @@ var render = module.exports.render = function () {
         .gravity(0)
         .start();
     circles.call(force.drag);
+    icons.call(force.drag);
 
 
     force.on('tick',function() {
@@ -136,7 +139,8 @@ var render = module.exports.render = function () {
       circleVis.onTick(circles, new_selected_tag, width, height, dateScale, collide);
 
       //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
-      textVis.onTick(text, new_selected_tag, width, height, svg);
+      // textVis.onTick(text, new_selected_tag, width, height, svg);
+      iconVis.onTick(icons, new_selected_tag, width, height, svg, radiusScale)
 
       if (new_selected_tag) {
         force.stop();

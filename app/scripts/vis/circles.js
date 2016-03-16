@@ -1,13 +1,28 @@
 var utils = require('./utils'),
-scales = require('./scales');
+scales = require('./scales'),
+d3 = require('d3'),
+d3tip = require('d3-tip');
+d3tip(d3);
 
 module.exports.enter = function enter(svg, json, radiusScale) {
+  svg.call(tip);
 	return svg.selectAll("circle .tag").data(json).enter().append("circle")
     .attr('r',function(d){return radiusScale(d.dates.length)})
     .attr('id', function(d){return utils.idify(d.tag)})
-    .attr('class','tag')
-    .style('fill','lightblue')
+    .attr('alt', function(d){return utils.prettify(d.tag)})
+    .attr('class', 'tag')
+    .style('fill', 'lightblue')
+    .on('mouseover', tip.show)
+    on('mouseout', tip.hide)
 }
+
+
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<span class='tip'>" + utils.prettify(d.tag) + "</span>";
+  })
 
 module.exports.getSelected = function getSelected(selection, width, height) {
 	var selected_tag;
