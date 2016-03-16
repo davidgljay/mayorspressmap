@@ -55,7 +55,7 @@ var render = module.exports.render = function () {
           d3.select('#selected_tag_circle').attr("transform", function(){
             return "translate(" + [ d.dx,d.dy ] + ")"
           })
-          d3.select('#selected_tag_text').attr("transform", function() {
+          d3.select('#selected_tag_image').attr("transform", function() {
             return "translate(" + [d.dx, d.dy ] + ")"
           })
         })
@@ -67,9 +67,6 @@ var render = module.exports.render = function () {
             //After fading out the currently selected tag, reload the page at the root url.
             rerender("");
           })
-          d3.select('#selected_tag_image').transition()
-          .duration(750)
-          .attr("opacity", 0);
         })
 
       var selected_tag_circle = svg.selectAll("circle .selected").data([selected_tag]).enter().append('circle')
@@ -82,14 +79,6 @@ var render = module.exports.render = function () {
       .style('fill','lightblue')
       .call(drag);
 
-      // var selected_tag_text = svg.append('text')
-      // .attr('width', maxRadius * 2)
-      // .attr('dx', width/10)
-      // .attr("dy",height/10+5)
-      // .attr('opacity',1)
-      // .attr('id',"selected_tag_text")
-      // .attr('text-anchor', 'middle')
-      // .text(utils.prettify(selected_tag.text));
       var selected_tag_icon = svg.append("image")
         .attr('width', maxRadius)
         .attr('height', maxRadius)

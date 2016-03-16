@@ -49,6 +49,8 @@ module.exports.onTick = function onTick(selection, selected, width, height, date
 
     //Move tags towards their appropriate spot in the visualization or towards the selection box.
     if (selectBox.x1<d.x && selectBox.x2>d.x && selectBox.y1 < d.y && selectBox.y2 > d.y) {
+      //Hide tooltips when getting drawn into the selection box
+      tip.hide()
       d.y += (height/10 - d.y) * alpha;
       d.x += (width/10 - d.x) * alpha;
     } else {
