@@ -54,8 +54,8 @@ module.exports.onTick = function onTick(selection, selected, width, height, date
       d.y += (height/10 - d.y) * alpha;
       d.x += (width/10 - d.x) * alpha;
     } else {
-      d.y += (height/2 - d.y) * alpha;
-      d.x += (dateScale(utils.med_date(d.dates))- d.x) * alpha;
+      d.y += (dateScale(utils.med_date(d.dates))- d.y) * alpha;
+      d.x += (width/2 - d.x) * alpha;
     }
   })
   .each(collide(.5))

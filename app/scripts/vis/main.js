@@ -7,8 +7,8 @@ utils = require('./utils'),
 d3 = require('d3');
 
 var maxRadius = 40,
-width=700,
-height=400;
+width=950,
+height=600;
 
 var render = module.exports.render = function () {
 
@@ -101,13 +101,13 @@ var render = module.exports.render = function () {
 
     //Add x and Y to tagdata
     for (var i=0; i<tagdata.length; i++) {
-      tagdata[i].x = width/2;
-      tagdata[i].y = height/2 + i;
+      tagdata[i].x = width/2 + i;
+      tagdata[i].y = height/2;
     }
 
     //Generate scales
-    var countScale = scales.getCountScale(tagdata, height),
-    dateScale = scales.getDateScale(tagdata, width),
+    var countScale = scales.getCountScale(json.max, height),
+    dateScale = scales.getDateScale(tagdata, height),
     radiusScale = scales.getRadiusScale(json.max, maxRadius),
 
     //Add circles and text

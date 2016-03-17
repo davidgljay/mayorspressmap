@@ -16,13 +16,13 @@ var getMaxCount = module.exports.getMaxCount = function (json) {
   return maxCount;
 };
 
-module.exports.getCountScale = function getCountScale(json, height) {
+module.exports.getCountScale = function getCountScale(maxVal, height) {
   return d3.scale.linear()
-    .domain([0, getMaxCount(json)])
+    .domain([0, maxVal])
     .range([height-20, 20]);
 };
 
-module.exports.getDateScale = function getDateScale(json, width) {
+module.exports.getDateScale = function getDateScale(json, height) {
   var maxDate = 0, minDate = new Date().getTime();
   for (var i = json.length - 1; i >= 0; i--) {
     // var date = new Date(json[i].med_date).getTime();
@@ -36,5 +36,5 @@ module.exports.getDateScale = function getDateScale(json, width) {
   };
   return d3.scale.linear()
     .domain([minDate, maxDate])
-    .range([20, width-20]);
+    .range([50, height-50]);
 };
