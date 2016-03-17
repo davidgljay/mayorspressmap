@@ -70,6 +70,23 @@ body {
     }
 }
 
+circle.selection_target {
+    fill: $red;
+    z-index: -100;
+}
+
+image.selection_target {
+    z-index:-99;
+}
+
+circle.tag {
+    fill: $blue;
+}
+
+circle.selected {
+    fill: $red;
+}
+
 .fade {
     -webkit-animation: 500ms fade_out;
      -moz-animation: 500ms fade_out;

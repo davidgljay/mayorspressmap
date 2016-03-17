@@ -8,7 +8,11 @@ d3 = require('d3');
 
 var maxRadius = 40,
 width=950,
-height=600;
+height=600,
+selection_point = {
+  x: 9*width/10,
+  y: 9*height/10
+}
 
 var render = module.exports.render = function () {
 
@@ -36,13 +40,20 @@ var render = module.exports.render = function () {
     datapath = '/maps/all.json';
   }
 
-  var target = svg.append('circle')
-      .attr('r', 5)
-      .attr('id','target')
-      .attr('cx',width/10)
-      .attr('cy',height/10)
-      .style('fill','red')
-      .style('z-index','-100');
+
+  var target_circle = svg.append('circle')
+      .attr('r',20)
+      .attr('cx', selection_point.x)
+      .attr('cy', selection_point.y)
+      .classed('selection_target',true);
+  var target_icon = svg.append('image')
+      .attr('xlink:href',"images/search.svg")
+      .attr('width', 20)
+      .attr('height',20)
+      .classed('selection_target',true)
+      .attr('x',selection_point.x-10)
+      .attr('y',selection_point.y-10);
+
 
     //See if we are pulling data about a particular tag.
     //TODO: Move logic to separate file
@@ -72,19 +83,18 @@ var render = module.exports.render = function () {
       var selected_tag_circle = svg.selectAll("circle .selected").data([selected_tag]).enter().append('circle')
       .attr('r', maxRadius)
       .attr('id',"selected_tag_circle")
-      .attr('cx',width/10)
-      .attr('cy',height/10)
+      .attr('cx',selection_point.x)
+      .attr('cy',selection_point.y)
       .attr('opacity',1)
       .classed('selected', true)
-      .style('fill','lightblue')
       .call(drag);
 
       var selected_tag_icon = svg.append("image")
         .attr('width', maxRadius)
         .attr('height', maxRadius)
         .attr('xlink:href','images/icons/' + utils.idify(selected_tag.text) + '.png')
-        .attr('x', width/10-maxRadius/2)
-        .attr('y', height/10-maxRadius/2)
+        .attr('x', selection_point.x-maxRadius/2)
+        .attr('y', selection_point.y-maxRadius/2)
         .attr('id', 'selected_tag_image');
 
 
@@ -130,9 +140,9 @@ var render = module.exports.render = function () {
 
 
     force.on('tick',function() {
-      var new_selected_tag = circleVis.getSelected(circles, width, height);
+      var new_selected_tag = circleVis.getSelected(circles, selection_point, width, height);
       //Draw each circle to a point on the x axis equal to its gravity.
-      circleVis.onTick(circles, new_selected_tag, width, height, dateScale, collide);
+      circleVis.onTick(circles, new_selected_tag, selection_point, width, height, dateScale, collide);
 
       //Set the X and Y coordinates of each text element equal to the circle that shares its ID.
       // textVis.onTick(text, new_selected_tag, width, height, svg);
@@ -145,6 +155,7 @@ var render = module.exports.render = function () {
       svg.select("circle#"+new_selected_tag).transition()
       .duration(500)
         .attr("r",maxRadius)
+        .style("fill",'#DD1C1A')
         //Navigate to a new page when the transition is complete
         .each("end", function() {
             rerender("/tag/" + new_selected_tag);

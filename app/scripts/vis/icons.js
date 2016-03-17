@@ -2,13 +2,14 @@ var utils = require('./utils'),
 scales = require('./scales');
 
 module.exports.enter = function enter(svg,json, radiusScale) {
-	return svg.selectAll("image .tag").data(json).enter().append("image")
+	return svg.selectAll("image .tag .icon").data(json).enter().append("image")
         .attr('id', function(d){return utils.idify(d.tag)})
         .attr('xlink:href',function(d){return 'images/icons/' + utils.idify(d.tag) + '.png'})
         .attr('width', function(d) {return radiusScale(d.dates.length)})
         .attr('height', function(d) {return radiusScale(d.dates.length)})
         // .attr("dy",".32em")
-        .classed('tag', true);
+        .classed('tag', true)
+        .classed('icon', true);
 }
 
 module.exports.onTick = function onTick(selection, selected, width, height, svg, radiusScale) {
