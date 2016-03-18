@@ -36,5 +36,5 @@ module.exports.getDateScale = function getDateScale(json, height) {
   };
   return d3.scale.linear()
     .domain([minDate, maxDate])
-    .range([50, height-50]);
+    .range([height-50,50]);
 };
