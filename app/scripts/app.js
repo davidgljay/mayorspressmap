@@ -13,8 +13,8 @@ var MayorsBuzz = React.createClass({
 
     return (
       <div id="main">
-        <Cities selected='NYC'/>
         <BubbleMap path='/maps/all.json'/>
+        <Cities />
         <Results />
       </div>
     );

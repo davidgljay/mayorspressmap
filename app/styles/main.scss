@@ -17,6 +17,7 @@ $grey: #CCDBDC;
 body {
     padding-top: 20px;
     padding-bottom: 20px;
+    font-family:'proxima-nova';
 }
 
 /* Custom page header */
@@ -69,6 +70,17 @@ body {
         margin-bottom: 30px;
     }
 }
+
+/*City styling*/
+
+div.citybtn {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    line-height:47px;
+}
+
+/*Circle styling*/
 
 circle.selection_target {
     fill: $red;

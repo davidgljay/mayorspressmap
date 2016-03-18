@@ -18,7 +18,8 @@ var Cities = React.createClass({
         <div className="row">
           {this.props.cities.map(function(city) {
             var selected = city.code==self.state.city?'btn-primary':'btn-default';
-            return <button id={city.code} key={city.code} onClick={self.handleClick.bind(this,city)} title={city.name} className={selected + ' btn col-md-1'}>{city.code}</button>
+            var offset = city.code=='ALL'?' col-md-offset-2':'';
+            return <div id={city.code} key={city.code} onClick={self.handleClick.bind(this,city)} title={city.name} className={selected + offset + ' btn col-md-1 citybtn'}>{city.code}</div>
           })}
         </div>
     );
