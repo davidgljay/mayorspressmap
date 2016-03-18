@@ -54,6 +54,19 @@ var render = module.exports.render = function () {
       .attr('x',selection_point.x-10)
       .attr('y',selection_point.y-10);
 
+  var trend_up_text = svg.append('text')
+      .attr('dx', width/5)
+      .attr('dy', height/10)
+      .style('text-align','center')
+      .style('font-weight','bold')
+      .text('Trending Up')
+  var trend_down_text = svg.append('text')
+      .attr('dx', width/5)
+      .attr('dy', 9*height/10)
+      .style('text-align','center')
+      .style('font-weight','bold')
+      .text('Trending Down')
+
 
     //See if we are pulling data about a particular tag.
     //TODO: Move logic to separate file
