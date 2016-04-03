@@ -106,6 +106,30 @@ circle.selected {
         animation: 500ms fade_out;
 }
 
+/*Results Styling*/
+
+.result {
+    
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-top: lightgrey 1px solid;
+    border-bottom: lightgrey 1px solid;
+
+    .header {
+        text-align:center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size:18px;
+        border-right: $red 2px solid;
+    }
+
+    .person {
+        background: $gold;
+        color:#000;
+        font-size: 14px;
+    }
+}
+
 /* Bubblemaps exit animation. TODO: look for a way to move this into a separate CSS file.*/
 
 @-webkit-keyframes fade_out { from { opacity:1.0; } to { opacity:0; }  }
