@@ -8,7 +8,7 @@ d3 = require('d3');
 
 var maxRadius = 40,
 width=950,
-height=600,
+height=700,
 selection_point = {
   x: 9*width/10,
   y: 9*height/10
@@ -54,21 +54,39 @@ var render = module.exports.render = function () {
       .attr('x',selection_point.x-10)
       .attr('y',selection_point.y-10);
 
+  svg.append('image')
+    .attr('id','downarrow')
+    .attr('xlink:href','images/arrow.png')
+    .attr('width',90)
+    .attr('height',100)
+    .attr('x', width/5-45)
+    .attr('y', 7.25*height/10)
+  svg.append('image')
+    .attr('id','uparrow')
+    .attr('xlink:href','images/arrow.png')
+    .attr('width',90)
+    .attr('height',100)
+    .attr('x', width/5-45)
+    .attr('y', 1.25*height/10)
+    .attr('transform','rotate(180,'+ (width/5)+','+ (1.25*height/10+50) +')')
   svg.append('text')
       .attr('dx', width/5)
       .attr('dy', height/10)
       .classed('vis_text',true)
-      .text('Trending Up');
+      .text('Trending Up')
+      .attr('text-anchor','middle')
   svg.append('text')
       .attr('dx', width/5)
       .attr('dy', 9*height/10)
       .classed('vis_text',true)
-      .text('Trending Down');
-  svg.append('text')
-      .attr('dx', 9*width/10)
-      .attr('dy', 8*height/20)
-      .classed('vis_text',true)
-      .text('Drag Here');
+      .text('Trending Down')
+      .attr('text-anchor','middle');
+
+  // svg.append('text')
+  //     .attr('dx', 9*width/10)
+  //     .attr('dy', 8*height/20)
+  //     .classed('vis_text',true)
+  //     .text('Drag Here');
 
 
 
